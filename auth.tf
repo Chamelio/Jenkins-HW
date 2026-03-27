@@ -7,13 +7,13 @@ terraform {
   }
 
   backend "s3" {
-    bucket  = "milatinas"         # your S3 bucket
+    bucket  = "milatinas"                 # your S3 bucket
     key     = "jenkins/terraform.tfstate" # path inside the bucket
-    region  = "us-east-1"
+    region  = "us-east-2"
     encrypt = true
   }
 }
 
 provider "aws" {
-  region = "us-east-1"
+  region = "us-east-2"
 }
