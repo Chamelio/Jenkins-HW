@@ -15,13 +15,13 @@ resource "aws_s3_object" "object-txt" {
   source = "${path.module}/Armageddon-Proof/armageddon-link.txt"
 }
 
-resource "aws_s3_object" "object-png" {
+resource "aws_s3_object" "my-first-object.png" {
   bucket = aws_s3_bucket.frontend.id
   key    = "Armageddon-Proof/passing.png"
   source = "${path.module}/Armageddon-Proof/passing.png"
 }
 
-resource "aws_s3_object" "object-png-2" {
+resource "aws_s3_object" "my-second-object.png" {
   bucket = aws_s3_bucket.frontend.id
   key    = "Armageddon-Proof/lab-evidence.png"
   source = "${path.module}/Armageddon-Proof/lab-evidence.png"
