@@ -20,9 +20,3 @@ resource "aws_s3_object" "object-png" {
   key    = "Armageddon-Proof/passing.png"
   source = "${path.module}/Armageddon-Proof/passing.png"
 }
-
-resource "aws_s3_object" "object-png-2" {
-  bucket = aws_s3_bucket.frontend.id
-  key    = "Armageddon-Proof/lab-evidence.png"
-  source = "${path.module}/Armageddon-Proof/lab-evidence.png"
-}
