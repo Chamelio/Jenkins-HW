@@ -51,12 +51,12 @@ resource "aws_s3_object" "object-png" {
 resource "aws_s3_object" "object-jpg" {
 
   for_each = toset([
-    
-    "image1.jpg","image2.jpeg","image3.jpg","image4.jpg","image5.jpg","image6.jpg","image7.jpg"
+
+    "image1.jpg", "image2.jpeg", "image3.jpg", "image4.jpg", "image5.jpg", "image6.jpg", "image7.jpg"
   ])
 
   bucket       = aws_s3_bucket.s3-jenkins-1.id
   key          = "lab-evidence/${each.value}"
-   source       = "${path.module}/lab-evidence/${each.value}"
+  source       = "${path.module}/lab-evidence/${each.value}"
   content_type = "image/jpeg"
 }
