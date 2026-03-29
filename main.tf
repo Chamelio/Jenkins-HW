@@ -49,6 +49,6 @@ resource "aws_s3_object" "object-png" {
 }
 resource "aws_s3_object" "object-jpg" {
   bucket = aws_s3_bucket.s3-jenkins-1.id
-  key    = "lab-evidence/lab_evidence.jpg"
-  source = "${path.module}/lab-evidence/lab_evidence.jpg"
+  key    = "lab-evidence/lab-evidence.jpg"
+  source = "${path.module}/lab-evidence/lab-evidence.jpg"
 }
