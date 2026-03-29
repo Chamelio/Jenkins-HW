@@ -47,12 +47,8 @@ resource "aws_s3_object" "object-png" {
   key    = "Armageddon-Proof/passing.png"
   source = "${path.module}/Armageddon-Proof/passing.png"
 }
-
-resource "aws_s3_object" "Lab_Evidence" {
-  for_each = fileset("${path.module}/Armageddon-Proof/lab_evidence", "**")
-
-  bucket       = aws_s3_bucket.s3-jenkins-1.id
-  key          = "Armageddon-Proof/lab_evidence/${each.value}"
-  source       = "${path.module}/Armageddon-Proof/lab_evidence/${each.value}"
-  content_type = "image/png"
+resource "aws_s3_object" "object-jpg" {
+  bucket = aws_s3_bucket.s3-jenkins-1.id
+  key    = "lab-evidence/lab_evidence.jpg"
+  source = "${path.module}/lab-evidence/lab_evidence.jpg"
 }
