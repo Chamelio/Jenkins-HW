@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "s3-jenkins-1" {
-  bucket_prefix = "s3-prefix-"
+  bucket_prefix = "milatinas"
   force_destroy = true
 
 
