@@ -1,5 +1,5 @@
-resource "aws_s3_bucket" "frontend" {
-  bucket_prefix = "jenkins-bucket-"
+resource "aws_s3_bucket" "s3-jenkins-1" {
+  bucket_prefix = "s3-prefix-"
   force_destroy = true
 
 
@@ -8,15 +8,51 @@ resource "aws_s3_bucket" "frontend" {
   }
 }
 
+resource "aws_s3_bucket_public_access_block" "public_access" {
+  bucket = aws_s3_bucket.s3-jenkins-1.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+
+}
+
+resource "aws_s3_bucket_policy" "s3_public_access_policy" {
+  bucket = aws_s3_bucket.s3-jenkins-1.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "PublicReadGetObject"
+        Effect    = "Allow"
+        Principal = "*"
+        Action    = "s3:GetObject"
+        Resource  = "${aws_s3_bucket.s3-jenkins-1.arn}/*"
+      },
+    ]
+  })
+
+  depends_on = [aws_s3_bucket_public_access_block.public_access]
+}
 
 resource "aws_s3_object" "object-txt" {
-  bucket = aws_s3_bucket.frontend.id
+  bucket = aws_s3_bucket.s3-jenkins-1.id
   key    = "Armageddon-Proof/armageddon-link.txt"
   source = "${path.module}/Armageddon-Proof/armageddon-link.txt"
 }
 
 resource "aws_s3_object" "object-png" {
-  bucket = aws_s3_bucket.frontend.id
+  bucket = aws_s3_bucket.s3-jenkins-1.id
   key    = "Armageddon-Proof/passing.png"
   source = "${path.module}/Armageddon-Proof/passing.png"
+}
+
+resource "aws_s3_object" "Lab_Evidence" {
+  for_each = fileset("${path.module}/Armageddon-Proof/lab_evidence", "**")
+
+  bucket       = aws_s3_bucket.s3-jenkins-1.id
+  key          = "Armageddon-Proof/lab_evidence/${each.value}"
+  source       = "${path.module}/Armageddon-Proof/lab_evidence/${each.value}"
+  content_type = "image/png"
 }
