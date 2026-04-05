@@ -14,8 +14,8 @@ pipeline {
             }
         }
 
-        stage('Snyk IaC Scan Test') {
-    steps {
+    stage('Snyk IaC Scan Test') {
+       steps {
         withCredentials([string(credentialsId: 'snyk-api-token-string', variable: 'SNYK_TOKEN')]) {
             sh '''
                 export PATH=$PATH:/var/lib/jenkins/tools/io.snyk.jenkins.tools.SnykInstallation/snyk
