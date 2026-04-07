@@ -7,12 +7,24 @@ pipeline {
         SNYK_ORG           = credentials('snyk-org-slug')
     }
 
-        stages {
+    stages {
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
+
+stage('Snyk IaC Scan Test') {
+    steps {
+        withCredentials([string(credentialsId: 'snyk-api-token-string', variable: 'SNYK_TOKEN')]) {
+            sh '''
+                export PATH=$PATH:/var/lib/jenkins/tools/io.snyk.jenkins.tools.SnykInstallation/snyk
+                snyk auth $SNYK_TOKEN
+                snyk iac test --org=$SNYK_ORG --severity-threshold=high || true
+            '''
+        }
+    }
+}
         
         stage('Snyk IaC Scan Monitor') {
             steps {
@@ -26,23 +38,11 @@ pipeline {
             }
         }
 
-        stage('Snyk IaC Scan Test') {
-    steps {
-        withCredentials([string(credentialsId: 'snyk-api-token-string', variable: 'SNYK_TOKEN')]) {
-            sh '''
-                export PATH=$PATH:/var/lib/jenkins/tools/io.snyk.jenkins.tools.SnykInstallation/snyk
-                snyk auth $SNYK_TOKEN
-                snyk iac test --org=$SNYK_ORG --severity-threshold=high || true
-            '''
-        }
-    }
-}
-
         stage('Terraform Init') {
             steps {
                 withCredentials([[
                     $class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: 'Jenkins' // need populate based on name in Jenkins for AWS Credentials
+                    credentialsId: 'Jenkins'
                 ]]) {
                     sh 'terraform init'
                 }
