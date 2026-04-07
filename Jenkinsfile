@@ -14,18 +14,17 @@ pipeline {
             }
         }
 
-    stage('Snyk IaC Scan Test') {
-       steps {
-        withCredentials([string(credentialsId: 'snyk-api-token-string', variable: 'SNYK_TOKEN')]) {
-            sh '''
-                export PATH=$PATH:/var/lib/jenkins/tools/io.snyk.jenkins.tools.SnykInstallation/snyk
-                snyk auth $SNYK_TOKEN
-                snyk iac test --org=$SNYK_ORG --severity-threshold=high || true
-            '''
-        }
-    }
-}
-        
+        stage('Snyk IaC Scan Test') {
+            steps {
+                withCredentials([string(credentialsId: 'snyk-api-token-string', variable: 'SNYK_TOKEN')]) {
+                    sh '''
+                        export PATH=$PATH:/var/lib/jenkins/tools/io.snyk.jenkins.tools.SnykInstallation/snyk
+                        snyk-linux auth $SNYK_TOKEN
+                        snyk-linux iac test --org=$SNYK_ORG --severity-threshold=high || true
+                    '''
+                }
+            }
+        }        
         stage('Snyk IaC Scan Monitor') {
             steps {
                 snykSecurity(
@@ -36,46 +35,26 @@ pipeline {
                     monitorProjectOnBuild: false
                 )
             }
-        }    
+        }
 
         stage('Terraform Init') {
             steps {
                 withCredentials([[
                     $class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: 'Jenkins' // need populate based on name in Jenkins for AWS Credentials
+                    credentialsId: 'Jenkins'
                 ]]) {
                     sh 'terraform init'
                 }
             }
         }
 
-        stage('Terraform Validate') {
+        stage('Terraform Plan') {
             steps {
                 withCredentials([[
                     $class: 'AmazonWebServicesCredentialsBinding',
                     credentialsId: 'Jenkins'
                 ]]) {
-                    sh 'terraform validate'
-                }
-            }
-        }
-
-        stage('Terraform Format') {
-            steps {
-                sh 'terraform fmt -check'
-            }
-        }
-
-        stage('Terraform Apply') {
-            steps {
-                withCredentials([[
-                    $class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: 'Jenkins' // need populate based on name in Jenkins for AWS Credentials
-                ]]) {
-                    sh '''
-                        terraform plan -out=tfplan
-                        terraform apply -auto-approve tfplan
-                    '''
+                    sh 'terraform plan'
                 }
             }
         }
@@ -98,7 +77,7 @@ pipeline {
                     if (destroyChoice == 'yes') {
                         withCredentials([[
                             $class: 'AmazonWebServicesCredentialsBinding',
-                            credentialsId: 'Jenkins' // need populate based on name in Jenkins for AWS Credentials
+                            credentialsId: 'Jenkins'
                         ]]) {
                             sh 'terraform destroy -auto-approve'
                         }
