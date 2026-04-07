@@ -14,6 +14,7 @@ pipeline {
             }
         }
 
+<<<<<<< HEAD
         stage('Snyk IaC Scan Test') {
             steps {
                 withCredentials([string(credentialsId: 'snyk-api-token-string', variable: 'SNYK_TOKEN')]) {
@@ -25,6 +26,20 @@ pipeline {
                 }
             }
         }        
+=======
+stage('Snyk IaC Scan Test') {
+    steps {
+        withCredentials([string(credentialsId: 'snyk-api-token-string', variable: 'SNYK_TOKEN')]) {
+            sh '''
+                export PATH=$PATH:/var/lib/jenkins/tools/io.snyk.jenkins.tools.SnykInstallation/snyk
+                snyk auth $SNYK_TOKEN
+                snyk iac test --org=$SNYK_ORG --severity-threshold=high || true
+            '''
+        }
+    }
+}
+        
+>>>>>>> 44cc71588f2c9c235dddb348a6c8ec62dac10b82
         stage('Snyk IaC Scan Monitor') {
             steps {
                 snykSecurity(
